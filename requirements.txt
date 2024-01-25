@@ -4,7 +4,6 @@ cffi==1.16.0
 click==8.1.7
 colorama==0.4.6
 exceptiongroup==1.2.0
-graphviz==0.20.1
 h11==0.14.0
 idna==3.6
 networkx==3.2.1
