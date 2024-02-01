@@ -54,7 +54,8 @@ if __name__ == "__main__":
             print(f"({i} : {chunks(data, 10)[i]})", end=" ")
 
         print()
-        check_if_key_exists(data, 456789)
+        isFound = check_if_key_exists(data, 456789)
+        print(f"answer {isFound}")
     
 
     # out_file = open("myfile.txt", "w")

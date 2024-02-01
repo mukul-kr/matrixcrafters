@@ -53,6 +53,7 @@ def check_if_key_exists(tree_string, key):
         kitne_avoid_krne_hai[level + 1] += onesBeforePosition + sum(reconstructed_length_array[level + 1][: kitne_avoid_krne_hai[level]], 0)
         if not isTrue:
             return False
+    return True
 
 
 """
