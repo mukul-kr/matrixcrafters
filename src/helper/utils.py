@@ -32,7 +32,7 @@ def check_if_key_exists(tree_string, key):
     list_of_digits = [int(i) for i in str(key)]
     level = 0
     prev_next_count = 0
-    reconstructed_length_array: List[List[int]] = [[] for _ in range(6)]
+    reconstructed_length_array: List[List[int]] = [[] for _ in range(7)]
     reconstructed_fake_tree = [[] for _ in range(6)]
     for i in range(len(list_of_strings)):
         next_count = list_of_strings[i].count("1")
