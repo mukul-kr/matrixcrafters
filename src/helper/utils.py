@@ -42,7 +42,7 @@ def check_if_key_exists(tree_string, key):
             prev_next_count = sum(reconstructed_length_array[level], 0)
             level += 1
     kitne_avoid_krne_hai = [0 for _ in range(7)]
-    
+
     onesBeforePosition = 0
     for level in range(len(reconstructed_fake_tree)):
         # for no_of_child in range(len(reconstructed_fake_tree[level])):
@@ -50,7 +50,8 @@ def check_if_key_exists(tree_string, key):
             reconstructed_fake_tree[level][kitne_avoid_krne_hai[level]],
             list_of_digits[level],
         )
-        kitne_avoid_krne_hai[level + 1] += onesBeforePosition + sum(reconstructed_length_array[level + 1][: kitne_avoid_krne_hai[level]], 0)
+        kitne_avoid_krne_hai[level + 1] += onesBeforePosition + sum(
+            reconstructed_length_array[level + 1][: kitne_avoid_krne_hai[level]], 0)
         if not isTrue:
             return False
     return True
@@ -60,6 +61,8 @@ def check_if_key_exists(tree_string, key):
 isse ye pta chalega ki kon sa child hai ye.
 means ki next wale me itna avoid kr skte hai.
 """
+
+
 def isOneAtNPos(string, position):
     if string[position] == "1":
         # 1's before the position
@@ -74,7 +77,7 @@ def isOneAtNPos(string, position):
 
 def chunks(s, n):
     """Produce `n`-character chunks from `s`."""
-    return [s[i : i + n] for i in range(0, len(s), n)]
+    return [s[i: i + n] for i in range(0, len(s), n)]
 
 
 def insert_digit_wrapper(hashmap_tree, key, random_numbers):
@@ -84,3 +87,23 @@ def insert_digit_wrapper(hashmap_tree, key, random_numbers):
 
 def generate_random_numbers(start, end, num):
     return [random.randint(start, end) for _ in range(num)]
+
+
+def find_the_line_number_of_id(target_id, user_ids_file):
+    with open(user_ids_file, 'r') as file:
+        user_ids = file.read().splitlines()
+
+    low, high = 0, len(user_ids) - 1
+
+    while low <= high:
+        mid = (low + high) // 2
+        current_id = user_ids[mid]
+
+        if current_id == target_id:
+            return mid + 1
+        elif current_id < target_id:
+            low = mid + 1
+        else:
+            high = mid - 1
+
+    return -1

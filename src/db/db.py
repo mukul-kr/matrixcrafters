@@ -1,66 +1,87 @@
 import struct
 
+
 class CustomDatabase:
     def __init__(self, file_path):
         self.file_path = file_path
 
-    def _serialize_key_value(self, key, value):
-        key_bytes = key.encode('utf-8')
-        value_bytes = struct.pack('h', value) if value is not None else struct.pack('h', -1)
-        return b'\x01' + key_bytes + b'\x02' + value_bytes + b'\x99' + b'\x98'
-
-    def _deserialize_key_value(self, data):
-        key_start = data.find(b'\x01') + 1
-        key_end = data.find(b'\x02')
-        value_start = key_end + 1
-        value_end = data.find(b'\x99', value_start)
-
-        key = data[key_start:key_end].decode('utf-8')
-
-        # Check if there are at least 2 bytes for unpacking a short integer
-        if value_end - value_start >= 2:
-            value = struct.unpack('h', data[value_start:value_end])[0]
-            if value < 0:
-                value = None
-            return key, value
+    def _serialize_value(self, value):
+        # use a prefix byte to indicate the type of the value
+        # b'\x01' for int, b'\x02' for str, b'\x00' for None
+        if isinstance(value, int):
+            return b'\x01' + self._serialize_int_value(value)
+        elif isinstance(value, str):
+            return b'\x02' + self._serialize_str_value(value)
+        elif value is None:
+            return b'\x00'
         else:
-            # Handle the case where there are not enough bytes for value unpacking
-            return key, None
+            raise ValueError(
+                "Unsupported value type. Only int, str and None are supported.")
 
+    def _serialize_int_value(self, value):
+        return struct.pack('h', value)
 
-    def add_key_value(self, key, value):
-        # Read existing data
+    def _serialize_str_value(self, value):
+        return value.encode('utf-8')
+
+    def _deserialize_value(self, data):
+        # use the prefix byte to determine the type of the value
+        # b'\x01' for int, b'\x02' for str, b'\x00' for None
+        prefix = data[0]
+        if bytes([prefix]) == b'\x01':
+            return self._deserialize_int_value(data[1:])
+        elif bytes([prefix]) == b'\x02':
+            return self._deserialize_str_value(data[1:])
+        elif bytes([prefix]) == b'\x00':
+            return None
+        else:
+            raise ValueError(
+                "Invalid prefix byte. Expected b'\x01', b'\x02' or b'\x00'")
+
+    def _deserialize_int_value(self, data):
+        return struct.unpack('h', data)[0]
+
+    def _deserialize_str_value(self, data):
+        return data.decode('utf-8')
+
+    def add_value_at_line(self, line_number, value):
+        if line_number < 1:
+            raise ValueError(f"Invalid line number: {line_number}")
+
+        new_data = self._serialize_value(value)
+
         try:
             with open(self.file_path, 'rb') as file:
                 existing_data = file.read()
         except FileNotFoundError:
             existing_data = b''
 
-        # Serialize new key-value pair
-        new_data = self._serialize_key_value(key, value)
+        data_lines = existing_data.split(b'\n')
 
-        # Write combined data to the file
+        if line_number <= len(data_lines):
+            data_lines[line_number - 1] = new_data
+        else:
+            data_lines += [b''] * (line_number - len(data_lines) - 1)
+            data_lines.append(new_data)
+
+        new_binary_data = b'\n'.join(data_lines)
+
         with open(self.file_path, 'wb') as file:
-            file.write(existing_data + new_data)
+            file.write(new_binary_data)
 
-    def get_value(self, key):
+    def get_value(self, line_number):
         try:
             with open(self.file_path, 'rb') as file:
-                data = file.read()
+                for _ in range(line_number - 1):
+                    file.readline()
+                line_data = file.readline().rstrip(b'\r\n')
+                if not line_data:
+                    raise ValueError(
+                        f"Invalid line number: {line_number}, file ends at line {file.tell()}")
 
-            # Iterate through the binary data to find the matching key
-            data_list = data.split(b'\x98')
-            for i in range(len(data_list)):
-                
-                current_key, current_value = self._deserialize_key_value(data_list[i])
-                if current_key == key:
-                    return current_value
-                
-                # index += len(self._serialize_key_value(current_key, current_value))
+                value = self._deserialize_value(line_data)
 
-            # Key not found
-            raise LookupError(f"Key '{key}' not found")
+                return value
 
         except FileNotFoundError:
-            # File doesn't exist, return None
             raise LookupError(f"File '{self.file_path}' not found")
