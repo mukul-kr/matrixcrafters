@@ -71,7 +71,8 @@ if __name__ == "__main__":
         print("Value for 'name':", db.get_value("name"))
         '''
         now, store :
-        "only value without any key will be stored in.bin file"
+        "only value without any key will be stored in.bin file" 
+        "The data type will be either Integer or string"
         '''
     
 
