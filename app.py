@@ -3,6 +3,7 @@ import time
 import logging
 from src.data_structure.hash_map_tree import HashMapTree
 from src.helper.utils import check_if_key_exists, chunks
+from src.db.db import CustomDatabase 
 
 logging.basicConfig( encoding='utf-8', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -48,14 +49,30 @@ if __name__ == "__main__":
             
     for tree in hashmap_tree.hashmap.values():
         # tree.bfs()
+        db = CustomDatabase("db.bin")
         data = tree.create_data_to_save()
+        '''
+        store, 'data'  ""data is a value"" data_value
+        text file that will record 
+        line number from id.txt file and store valeu from data corresponding to the line number
+
+        use binary search for searching line numebr in the id.txt file 
+        '''
         for i in range(len(chunks(data, 10))):
 
             print(f"({i} : {chunks(data, 10)[i]})", end=" ")
-
         print()
-        isFound = check_if_key_exists(data, 456789)
-        print(f"answer {isFound}")
+        print(f" store this data: {chunks(data, 8)}")
+        key_to_search = 456789
+        isFound = check_if_key_exists(data, key_to_search)
+        print(f"answer for query: {key_to_search}: {isFound}")
+
+        db.add_key_value("name", 123)
+        print("Value for 'name':", db.get_value("name"))
+        '''
+        now, store :
+        "only value without any key will be stored in.bin file"
+        '''
     
 
     # out_file = open("myfile.txt", "w")

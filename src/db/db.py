@@ -64,34 +64,3 @@ class CustomDatabase:
         except FileNotFoundError:
             # File doesn't exist, return None
             raise LookupError(f"File '{self.file_path}' not found")
-
-# Example usage:
-db = CustomDatabase("db.bin")
-
-# Add key-value pairs
-db.add_key_value("name", 0)
-db.add_key_value("age", 1)
-db.add_key_value("city", 2)
-db.add_key_value("some3", 3)
-db.add_key_value("some4", 4)
-db.add_key_value("some5", 5)
-db.add_key_value("some6", 6)
-db.add_key_value("some7", 7)
-db.add_key_value("some8", 8)
-db.add_key_value("some9", 9)
-db.add_key_value("none", None)
-
-
-# Retrieve values
-print("Value for 'name':", db.get_value("name"))
-print("Value for 'age':", db.get_value("age"))
-print("Value for 'city':", db.get_value("city"))
-print("Value for 'some3':", db.get_value("some3"))
-print("Value for 'some4':", db.get_value("some4"))
-print("Value for 'some5':", db.get_value("some5"))
-print("Value for 'some6':", db.get_value("some6"))
-print("Value for 'some7':", db.get_value("some7"))
-print("Value for 'some8':", db.get_value("some8"))
-print("Value for 'some9':", db.get_value("some9"))
-print("Value for 'none':", db.get_value("none"))
-print("Value for 'unknown_key':", db.get_value("unknown_key"))
