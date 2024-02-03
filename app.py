@@ -2,7 +2,7 @@
 import time 
 import logging
 from src.data_structure.hash_map_tree import HashMapTree
-from src.helper.utils import check_if_key_exists, chunks
+from src.helper.utils import check_if_key_exists, chunks, convert_data_to_string, convert_string_to_data, find_the_line_number_of_id, read_specific_line
 
 logging.basicConfig( encoding='utf-8', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -49,13 +49,29 @@ if __name__ == "__main__":
     for tree in hashmap_tree.hashmap.values():
         # tree.bfs()
         data = tree.create_data_to_save()
-        for i in range(len(chunks(data, 10))):
 
-            print(f"({i} : {chunks(data, 10)[i]})", end=" ")
+        chunky = convert_data_to_string(data)
 
-        print()
-        isFound = check_if_key_exists(data, 456789)
-        print(f"answer {isFound}")
+        new_new_data = convert_string_to_data(chunky)
+        
+        chunky = ''.join(chunks(data, 8))
+        # print(len())
+        if data == new_new_data:
+            print("data is same")
+        else:
+            print("not same")
+        # for i in range(len(chunky)):
+        #     if chunky[i] == new_data[i]:
+        #         print(f"{i}data is same")
+        #     else:
+        #         print(f"{chunky[i], new_data[i]}data is not same")
+        # for i in range(len(chunks(data, 10))):
+
+        #     print(f"({i} : {chunks(data, 10)[i]})", end=" ")
+
+        # print()
+        # isFound = check_if_key_exists(data, 456789)
+        # print(f"answer {isFound}")
     
 
     # out_file = open("myfile.txt", "w")
@@ -65,11 +81,14 @@ if __name__ == "__main__":
 
     # # Close the file
     # out_file.close()
+    # print(read_specific_line("id.txt", 32))
+    # print(find_the_line_number_of_id("00c63c"))
 
-    end_time = time.time()
+    # end_time = time.time()
     # with open('my_file.pickle', 'wb') as file:
     # # Use pickle.dump() to save the object to the file
     #     pickle.dump(hashmap_tree, file)
+
     # elapsed_time = end_time - start_time
 
     

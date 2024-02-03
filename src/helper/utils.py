@@ -2,7 +2,7 @@ import hashlib
 import random
 import uuid
 from typing import List
-
+import linecache
 from src.data_structure.hash_map_tree import HashMapTree
 
 
@@ -56,6 +56,12 @@ def check_if_key_exists(tree_string, key):
     return True
 
 
+def reconstruct_tree_from_string(key ,data):
+    hashmap_tree = HashMapTree()
+    hashmap_tree.insert_empty_tree(key)
+
+
+
 """
 isse ye pta chalega ki kon sa child hai ye.
 means ki next wale me itna avoid kr skte hai.
@@ -84,3 +90,58 @@ def insert_digit_wrapper(hashmap_tree, key, random_numbers):
 
 def generate_random_numbers(start, end, num):
     return [random.randint(start, end) for _ in range(num)]
+
+
+def find_the_line_number_of_id(target_id):
+    # with open(user_ids_file, 'r') as file:
+        # user_ids = file.read().splitlines()
+
+    low, high = 0, 10000 # in future it will be 10 million
+    index = 0
+    while low <= high:
+        index += 1
+        mid = (low + high) // 2
+        current_id = ''.join(e for e in read_specific_line("id.txt", mid) if e.isalnum())
+        print(current_id, target_id)
+        if current_id == target_id:
+            print(index)
+            return mid
+        elif current_id < target_id:
+            low = mid + 1
+        else:
+            high = mid - 1
+
+    return -1
+
+
+def read_specific_line(filename, line_number):
+    return linecache.getline(filename, line_number)
+
+def convert_data_to_string(data):
+    ascii_8_length = chunks(data, 8)
+    ascii_1_length = [bin_to_ascii(x) for x in ascii_8_length]
+    print(ascii_1_length)
+    return "".join(ascii_1_length)
+
+def bin_to_ascii(bin_str):
+    # Convert binary string to integer
+    int_val = int(bin_str, 2)
+    
+    # Convert integer to ASCII character
+    ascii_char = chr(int_val)
+    
+    return ascii_char
+
+
+def convert_string_to_data(ascii_str):
+    # Convert ASCII characters to binary
+    binary_str = ''.join(format(ord(ch), '08b') for ch in ascii_str)
+    
+    # Group binary string into chunks of 8 bits
+    ascii_8_length = [binary_str[i:i+8] for i in range(0, len(binary_str), 8)]
+    
+    new_new_data = "".join(ascii_8_length[:-1])
+    new_data_len_append = 10 - len(new_new_data)%10
+    new_new_data += ascii_8_length[-1][-(new_data_len_append):]
+
+    return new_new_data
