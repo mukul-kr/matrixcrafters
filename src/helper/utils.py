@@ -102,9 +102,9 @@ def find_the_line_number_of_id(target_id):
         index += 1
         mid = (low + high) // 2
         current_id = ''.join(e for e in read_specific_line("id.txt", mid) if e.isalnum())
-        print(current_id, target_id)
+        # print(current_id, target_id)
         if current_id == target_id:
-            print(index)
+            # print(index)
             return mid
         elif current_id < target_id:
             low = mid + 1
@@ -120,7 +120,7 @@ def read_specific_line(filename, line_number):
 def convert_data_to_string(data):
     ascii_8_length = chunks(data, 8)
     ascii_1_length = [bin_to_ascii(x) for x in ascii_8_length]
-    print(ascii_1_length)
+    # print(ascii_1_length)
     return "".join(ascii_1_length)
 
 def bin_to_ascii(bin_str):

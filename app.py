@@ -1,19 +1,22 @@
 
-import time 
+import time
 import logging
 from src.data_structure.hash_map_tree import HashMapTree
-from src.helper.utils import check_if_key_exists, chunks, convert_data_to_string, convert_string_to_data, find_the_line_number_of_id, read_specific_line
+from src.db.db import CustomDatabase
+from src.helper.utils import check_if_key_exists, convert_data_to_string, convert_string_to_data, find_the_line_number_of_id
 
-logging.basicConfig( encoding='utf-8', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(encoding='utf-8', level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 if __name__ == "__main__":
-    start_time = time.time()
     hashmap_tree = HashMapTree()
 
-    hashmap_tree.insert_empty_tree("0")
-    # hashmap_tree.insert_empty_tree("1")
+    db = CustomDatabase("db.bin")
 
-    # Insert digits into trees
+    user_id = 'bcd0d9'
+
+    hashmap_tree.insert_empty_tree("0")
+
     hashmap_tree.insert_digit("0", 411111)
     hashmap_tree.insert_digit("0", 456789)
     hashmap_tree.insert_digit("0", 452749)
@@ -21,84 +24,50 @@ if __name__ == "__main__":
     hashmap_tree.insert_digit("0", 466789)
     hashmap_tree.insert_digit("0", 488888)
     hashmap_tree.insert_digit("0", 566789)
-    # hashmap_tree.insert_digit("1", 456789)
-    # hashmap_tree.insert_digit("1", 452789)
 
-    # for _ in range(1):
-    #     logging.info(_)
-    #     generate_seller_id(hashmap_tree)
+    # hashmap_tree.print_all_trees() # print the tree where data is stored
 
-
-    hashmap_tree.print_all_trees()
-
-    # # For each key, generate between 1000-10000 random numbers and insert them into the corresponding tree
-        
-    # for key in hashmap_tree.hashmap.keys():
-    #     num_elements = random.randint(100, 100)
-    #     random_numbers = generate_random_numbers(100000, 999999, num_elements)
-    #     for number in random_numbers:
-    #         hashmap_tree.insert_digit(key, number)
-    # # for key in hashmap_tree.hashmap.keys():
-    # #     logging.info(f"inserting in {key}")
-    # #     num_elements = random.randint(1000, 10000)
-    # #     random_numbers = generate_random_numbers(100000, 999999, num_elements)
-    # #     # for number in random_numbers:
-    # #     t = threading.Thread(target=insert_digit_wrapper, args=(hashmap_tree, key, random_numbers))
-    # #     t.start()
-            
     for tree in hashmap_tree.hashmap.values():
-        # tree.bfs()
+
         data = tree.create_data_to_save()
 
-        chunky = convert_data_to_string(data)
+        data_to_save = convert_data_to_string(data)
+        print('The data to save in db: ', data_to_save)
+        '''
+        # chunky is saved to db ? 
 
-        new_new_data = convert_string_to_data(chunky)
-        
-        chunky = ''.join(chunks(data, 8))
-        # print(len())
-        if data == new_new_data:
-            print("data is same")
+        # APIs In | routes | for:  
+            ** create
+            ** read
+            ** update 
+            ** delete
+            ** search
+            ** health_check
+        '''
+        line_number = find_the_line_number_of_id(user_id)
+        if line_number != -1:
+            print(f"User ID '{user_id}' found on line {line_number}.")
         else:
-            print("not same")
-        # for i in range(len(chunky)):
-        #     if chunky[i] == new_data[i]:
-        #         print(f"{i}data is same")
-        #     else:
-        #         print(f"{chunky[i], new_data[i]}data is not same")
-        # for i in range(len(chunks(data, 10))):
+            print(f"User ID '{user_id}' not found in the file.")
+        # here data_to_save is string '◄ @@►♦D ☻@►►♦☺☺'
+        db.add_value_at_line(line_number, data_to_save)
+        found_value = db.get_value(line_number)
+        print(f"value found at {line_number}:", found_value)
 
-        #     print(f"({i} : {chunks(data, 10)[i]})", end=" ")
+        # compressed value to binary value
+        found_data = convert_string_to_data(found_value)
+        print('The fetched from dba nd converterd to original value',
+              found_data)  # print fetched bianry value
 
-        # print()
-        # isFound = check_if_key_exists(data, 456789)
-        # print(f"answer {isFound}")
-    
+        ''' don't know about this and why is it here? '''
+        # chunky = ''.join(chunks(data, 8))
+        # print(chunky, 'chunky')
 
-    # out_file = open("myfile.txt", "w")
+        if data == found_data:
+            print("\n data is same, from the time it was created and fetched from db.")
+        else:
+            print("Data is not same")
 
-    # # Dump the Python object into the file
-    # # json.dump(hashmap_tree.to_dict(), out_file)
-
-    # # Close the file
-    # out_file.close()
-    # print(read_specific_line("id.txt", 32))
-    # print(find_the_line_number_of_id("00c63c"))
-
-    # end_time = time.time()
-    # with open('my_file.pickle', 'wb') as file:
-    # # Use pickle.dump() to save the object to the file
-    #     pickle.dump(hashmap_tree, file)
-
-    # elapsed_time = end_time - start_time
-
-    
-    
-
-    # with open('my_file.pickle', 'rb') as file:
-    # # Use pickle.dump() to save the object to the file
-    #     hashmap_tree: HashMapTree = pickle.load(file)
-    #     hashmap_tree.print_all_trees()
-    #     print(f"answer {hashmap_tree.search_digit('0', 456789)}")
-
-
-    # logging.info("Elapsed Time: {} seconds".format(elapsed_time))
+        print()
+        isFound = check_if_key_exists(found_data, 456789)
+        print(f"answer: {isFound}")
