@@ -43,3 +43,5 @@ class CustomDatabase:
 
         except FileNotFoundError:
             raise LookupError(f"File '{self.file_path}' not found")
+
+db = CustomDatabase("base.db")

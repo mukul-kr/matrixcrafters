@@ -58,3 +58,5 @@ class HashMapTree:
             for child in node.children:
                 self._print_tree(child, depth + 1)
 
+
+hashmap_tree = HashMapTree()

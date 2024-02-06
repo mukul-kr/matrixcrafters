@@ -4,7 +4,7 @@ import uuid
 from typing import List
 import linecache
 from src.data_structure.hash_map_tree import HashMapTree
-
+from src.db.db import db
 
 def generate_short_uuid():
     # Generate a random UUID
@@ -145,3 +145,11 @@ def convert_string_to_data(ascii_str):
     new_new_data += ascii_8_length[-1][-(new_data_len_append):]
 
     return new_new_data
+
+
+def read_user_pins(line_number):
+    found_value = db.get_value(line_number)
+    print(f"value found at {line_number}:", found_value)
+    found_data = convert_string_to_data(found_value)
+    print('After converting value to binary:', found_data)  # print fetched binary value
+    return found_data

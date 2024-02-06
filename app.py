@@ -5,16 +5,15 @@ from src.data_structure.hash_map_tree import HashMapTree
 from src.db.db import CustomDatabase
 from src.helper.utils import check_if_key_exists, convert_data_to_string, convert_string_to_data, find_the_line_number_of_id
 from fastapi import FastAPI
+from src.routes import router as routes_router
 
 logging.basicConfig(encoding='utf-8', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
-# from src.routes import router as routes_router
 
 app = FastAPI()
 
-origins = ['*']
-
+origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -23,16 +22,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.get("/health_check")
-def health_check():
-    return {"status": "OK"}
-
+app.include_router(routes_router, prefix="/routes", tags=["routes"])
 
 if __name__ == "__main__":
     hashmap_tree = HashMapTree()
 
-    db = CustomDatabase("db.bin")
+    db = CustomDatabase("base.db") ## renamed to .db file from .bin
 
     user_id = 'bcd0d9'
 
