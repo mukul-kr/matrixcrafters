@@ -37,25 +37,26 @@ class BinaryTree:
             return self._insert(newchild, digit_list, idx + 1)
         
 
-    def insert_individual_digit(self, digit):
+    def insert_individual_digit(self, node, digit):
         if self.root is None:
             self.root = TreeNode(-1)
+            return self.root
         else:
-            self._insert_individual(self.root, digit)
+            return self._insert_individual(node, digit)
 
     """
     dummy logic for inserting individual digit in the tree
     """
+
     def _insert_individual(self, node, digit):
-        if node is None:
-            if self.root is None:
+        if node is None and self.root is None:
                 raise ValueError("Tree is empty")
-            else:  
-                self.root.children.append(TreeNode(digit))
-                self.root.children.sort(key=lambda x: x.digit)
         else:
-            node.children.append(TreeNode(digit))
+            new_node = TreeNode(digit)
+            node.children.append(new_node)
             node.children.sort(key=lambda x: x.digit)
+            return new_node
+
 
 
 

@@ -1,3 +1,4 @@
+import collections
 import hashlib
 import random
 import uuid
@@ -56,9 +57,58 @@ def check_if_key_exists(tree_string, key):
     return True
 
 
-def reconstruct_tree_from_string(key ,data):
+def reconstruct_tree_from_string(tree_string, key):
+    """
+    Reconstructs a binary tree from a given string representation.
+
+    Parameters:
+    - tree_string (str): The string representation of the binary tree.
+    - key (str): The key to identify the tree in the HashMapTree.
+
+    Returns:
+    - HashMapTree: The HashMapTree object containing the reconstructed binary tree.
+    Note: This function assumes that the HashMapTree class and the BinaryTree class are already imported.
+    """
     hashmap_tree = HashMapTree()
     hashmap_tree.insert_empty_tree(key)
+
+    tree = hashmap_tree.hashmap[key]
+    tree.insert_individual_digit(node=tree.root, digit=0)
+
+    list_of_strings = chunks(tree_string, 10)
+
+    reconstructed_length_array = [[] for _ in range(7)]
+    reconstructed_fake_tree = [[] for _ in range(6)]
+
+    level = 0
+    prev_next_count = 0
+    for i in range(len(list_of_strings)):
+        next_count = list_of_strings[i].count("1")
+        reconstructed_length_array[level].append(next_count)
+        reconstructed_fake_tree[level].append(list_of_strings[i])
+        if i == 0 or len(reconstructed_length_array[level]) == prev_next_count:
+            prev_next_count = sum(reconstructed_length_array[level], 0)
+            level += 1
+
+    reconstructed_real_tree = [[] for _ in range(6)]
+    for level in range(len(reconstructed_fake_tree)):
+        for no_of_child in range(len(reconstructed_fake_tree[level])):
+            new_array = []
+            for index, bit in enumerate(reconstructed_fake_tree[level][no_of_child]):
+                if bit == "1":
+                    new_array.append(index)
+            reconstructed_real_tree[level].append(new_array)
+
+    queue = collections.deque()
+    node = tree.root
+    for level in reconstructed_real_tree:
+        for child_indices in level:
+            for index in child_indices:
+                child = tree.insert_individual_digit(node, index)
+                queue.append(child)
+            node = queue.popleft()
+
+    return hashmap_tree
 
 
 
