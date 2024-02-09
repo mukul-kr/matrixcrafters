@@ -107,7 +107,7 @@ def reconstruct_tree_from_string(tree_string, key):
                 child = tree.insert_individual_digit(node, index)
                 queue.append(child)
             node = queue.popleft()
-
+    
     return hashmap_tree
 
 
@@ -197,9 +197,20 @@ def convert_string_to_data(ascii_str):
     return new_new_data
 
 
-def read_user_pins(line_number):
-    found_value = db.get_value(line_number)
-    print(f"value found at {line_number}:", found_value)
-    found_data = convert_string_to_data(found_value)
-    print('After converting value to binary:', found_data)  # print fetched binary value
-    return found_data
+def read_user_pins(hashmap_tree):
+    if hashmap_tree.hashmap.root is not None:
+        pins = []
+        _traverse_to_create_pin(hashmap_tree.root, pin = pins)
+        return pins 
+    return []
+
+
+def _traverse_to_create_pin(tree, queue = [], pin = [], level = 0):
+    if tree is None or level == 5:
+        pin.append(int(''.join(queue)))
+        return
+    for node in  tree.children:
+        if node is not None:
+            level += 1
+            queue.append(node.children.data)
+            _traverse_to_create_pin(node, pin , level)

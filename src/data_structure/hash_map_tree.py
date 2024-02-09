@@ -59,4 +59,4 @@ class HashMapTree:
                 self._print_tree(child, depth + 1)
 
 
-hashmap_tree = HashMapTree()
+# hashmap_tree = HashMapTree()
