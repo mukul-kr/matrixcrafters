@@ -1,6 +1,15 @@
+import os
+
+
 class CustomDatabase:
     def __init__(self, file_path):
         self.file_path = file_path
+        # Open a file in write mode ('w')
+        if not os.path.exists('base.db'):
+            with open('base.db', 'w') as file:
+                # Write '\n'  10 million times
+                for _ in range(10000000):
+                    file.write('\n')
 
     def add_value_at_line(self, line_number, value):
         print('value here is:', value, 'line number is:',

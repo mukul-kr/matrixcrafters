@@ -1,9 +1,11 @@
 
 from fastapi import APIRouter, Query
-from src.data_structure.hash_map_tree import hashmap_tree
+from src.data_structure.binary_tree import BinaryTree
+from src.data_structure.hash_map_tree import HashMapTree
+# from src.data_structure.hash_map_tree import hashmap_tree
 from src.db.db import db
 
-from src.helper.utils import check_if_key_exists, convert_data_to_string, find_the_line_number_of_id, read_user_pins
+from src.helper.utils import check_if_key_exists, convert_data_to_string, convert_string_to_data, find_the_line_number_of_id, read_specific_line, read_user_pins, reconstruct_tree_from_string
 from src.routes.schema import UserPinData
 
 router = APIRouter()
@@ -36,18 +38,31 @@ def create(user_data: UserPinData):
     pins = user_data.pins
     print('seller_id:', seller_id)
 
-    hashmap_tree.insert_empty_tree(seller_id)
+    line_number = find_the_line_number_of_id(seller_id)
+    if line_number == -1:
+        return {"message": f"{seller_id} doesn't exist in our database"}
+    db_conntent_prev = read_specific_line('base.db', line_number)
+    # print('db_conntent_prev:', ord(db_conntent_prev), 'line_number:', line_number)
+    if len(db_conntent_prev) == 0:
+        hashmap_tree = HashMapTree()
+        hashmap_tree.insert_empty_tree(seller_id)
+        # return {"message": f"{seller_id} already exist in our database"}
+    else:
+        hashmap_tree = HashMapTree()
+        hashmap_tree = reconstruct_tree_from_string(convert_string_to_data(db_conntent_prev), seller_id)
+
+
     for pin in pins:
         hashmap_tree.insert_digit(seller_id, pin)
-    for tree in hashmap_tree.hashmap.values():
-        data = tree.create_data_to_save()
-        data_to_save = convert_data_to_string(data)
-        line_number = find_the_line_number_of_id(seller_id)
-        print('line_number:', line_number)
-        if line_number == -1:
-            return {"message": f"{seller_id} doesn't exist in our database"}
-        db.add_value_at_line(line_number, data_to_save)
-        message = "Pin Inserted Successfully for the user"
+    # for tree in hashmap_tree.hashmap.values():
+        
+    tree: BinaryTree = hashmap_tree.hashmap[seller_id]
+    data = tree.create_data_to_save()
+    data_to_save = convert_data_to_string(data)
+    # print('line_number:', line_number)
+    
+    db.add_value_at_line(line_number, data_to_save)
+    message = "Pin Inserted Successfully for the user"
             
     return {"message": message}
 

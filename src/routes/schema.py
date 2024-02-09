@@ -3,4 +3,4 @@ from pydantic import BaseModel
 
 class UserPinData(BaseModel):
     seller_id: str
-    pins: List[str]
+    pins: List[int]
