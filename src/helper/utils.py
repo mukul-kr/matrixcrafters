@@ -197,20 +197,27 @@ def convert_string_to_data(ascii_str):
     return new_new_data
 
 
-def read_user_pins(hashmap_tree):
-    if hashmap_tree.hashmap.root is not None:
+def read_user_pins(hashmap_tree, key):
+    if hashmap_tree.hashmap[key].root is not None:
         pins = []
-        _traverse_to_create_pin(hashmap_tree.root, pin = pins)
+        _traverse_to_create_pin(hashmap_tree.hashmap[key].root,[], pin = pins)
+        print(pins)
         return pins 
     return []
 
 
 def _traverse_to_create_pin(tree, queue = [], pin = [], level = 0):
-    if tree is None or level == 5:
-        pin.append(int(''.join(queue)))
-        return
+    if tree is None or level == 6:
+        pin.append(int(''.join(str(digit) for digit in queue)))
+        level -= 1
+        queue.pop()
+        return level
     for node in  tree.children:
         if node is not None:
             level += 1
-            queue.append(node.children.data)
-            _traverse_to_create_pin(node, pin , level)
+            queue.append(node.digit)
+            level = _traverse_to_create_pin(node,queue=queue, pin=pin , level=level)
+    if len(queue) > 0:
+        level -= 1
+        queue.pop()
+    return level

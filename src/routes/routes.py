@@ -20,20 +20,22 @@ def search(seller_id: str = Query(..., alias="seller_id"), pin: str = Query(...)
     line_number = find_the_line_number_of_id(seller_id)
     if line_number == -1:
         return {"message": f"{seller_id} doesn't exist in our database"}
-    db_conntent_prev = read_specific_line('base.db', line_number)
-    
+    db_conntent_prev = read_specific_line('base.db', line_number)[:-1]
     hashmap_tree = reconstruct_tree_from_string(
         convert_string_to_data(db_conntent_prev), seller_id)
-    fetch_user_pins = read_user_pins(hashmap_tree)
+    fetch_user_pins = read_user_pins(hashmap_tree, key=seller_id)
     print(fetch_user_pins, 'The user have these pins associated to them')
 
     user_pins = [pin for pin in fetch_user_pins]
-    if pin not in user_pins:
+    print(user_pins)
+    if int(pin) not in user_pins:
+        print(f"{pin} doesn't exist for seller_id: {seller_id}")
         return {
             "message": f"{pin} doesn't exist for seller_id: {seller_id}", 
             "exists": False
             }
-    elif pin in user_pins:
+    elif int(pin) in user_pins:
+        print(f"{pin} exist for seller_id: {seller_id}")
         return {
             "message": f"{pin} exist for seller_id: {seller_id}",
             "exists": True
@@ -51,9 +53,9 @@ def create(user_data: UserPinData):
     line_number = find_the_line_number_of_id(seller_id)
     if line_number == -1:
         return {"message": f"{seller_id} doesn't exist in our database"}
-    db_conntent_prev = read_specific_line('base.db', line_number)
+    db_conntent_prev = read_specific_line('base.db', line_number)[:-1]
     print('db_conntent_prev:', db_conntent_prev, 'line_number:', line_number)
-    if True:
+    if not len(db_conntent_prev) > 0:
         hashmap_tree = HashMapTree()
         hashmap_tree.insert_empty_tree(seller_id)
         # return {"message": f"{seller_id} already exist in our database"}
@@ -66,9 +68,12 @@ def create(user_data: UserPinData):
     for pin in pins:
         hashmap_tree.insert_digit(seller_id, pin)
     # for tree in hashmap_tree.hashmap.values():
+    hashmap_tree.print_all_trees()
+    
 
     tree: BinaryTree = hashmap_tree.hashmap[seller_id]
     data = tree.create_data_to_save()
+    print(data)
     data_to_save = convert_data_to_string(data)
     # print('line_number:', line_number)
 
